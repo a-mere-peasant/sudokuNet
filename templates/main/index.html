@@ -1,0 +1,33 @@
+{%extends 'main/base.html'%}
+{% load static%}
+{%block body%}
+
+<div id="newbg" style="background: url('{%static 'img/bg.jpg'%}') center center fixed">
+<section id="hero">
+  <div class="container text-center position-relative" data-aos="fade-in" data-aos-delay="200">
+    <h1>Hello, Hola , नमस्ते</h1>
+    <br>
+    <div class="row">
+      <div class="col-lg-4 offset-lg-4">
+        <h2>I'm an intelligent bot that can solve any 9X9 sudoku puzzle.
+          If you want to see how i was developed, then refer to my developer's github profile.</h2>
+      </div>
+    </div>
+
+    <h1>Upload Sudoku Puzzle</h1>
+
+    <div class="row">
+      <!-- col-sm-4 offset-sm-4 -->
+        <div class="col-lg-4 col-sm-0 offset-lg-4 offset-md-2">
+          <form class="form-inline" enctype="multipart/form-data" action="/" method="POST">
+            {% csrf_token %}
+            <input type="file" accept='image/*' class="form-control" name="img" required>
+            <button type="submit" class="btn btn-get-started scrollto"> Submit</button>
+        </form>
+    </div>
+  </div>
+
+</div>
+</section>
+</div>
+{%endblock%}

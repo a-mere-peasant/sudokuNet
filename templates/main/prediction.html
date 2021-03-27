@@ -1,0 +1,44 @@
+{%extends 'main/base.html'%}
+{% load static%}
+{%block body%}
+
+<div id="newbg" style="background: url('{%static 'img/bg.jpg'%}') center center fixed">
+<section id="hero">
+
+  <div class="container">
+    <div class='row align-items-center'>
+      <div class='col-sm-6 offset-sm-3'>
+
+        <div class="card text-white bg-secondary">
+          <div class="card-body">
+
+            <table>
+              {% for rowval in results %}
+                 <tr>
+                 {% for val in rowval %}
+                  <td>{{val}}</td>
+                 {% endfor %}
+                </tr>
+              {% endfor %}
+            </table>
+
+
+            how to style table - https://stackoverflow.com/questions/23497444/how-to-make-a-sudoku-grid-using-html-and-css
+            
+
+
+          </div>
+        </div>
+
+        <a href="{%url 'main_page'%}" class="btn-get-started scrollto">Go Back</a>
+
+      </div>
+
+    </div>
+</div>
+
+</section>
+</div>
+
+
+{%endblock%}
