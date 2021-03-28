@@ -6,7 +6,7 @@ import operator
 
 def preprocess(img,skip_dilate=False):
     proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
-  proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)  
+  proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)
   proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
   proc = cv2.bitwise_not(proc, proc)
   if skip_dilate==False:
@@ -29,10 +29,10 @@ def findsudoku(img):
   bottom_left, _ = min(enumerate([pt[0][0] - pt[0][1] for pt in polygon]), key=operator.itemgetter(1))
   top_right, _ = max(enumerate([pt[0][0] - pt[0][1] for pt in polygon]), key=operator.itemgetter(1))
   top_left, top_right, bottom_right, bottom_left = polygon[top_left][0], polygon[top_right][0], polygon[bottom_right][0], polygon[bottom_left][0]
-  src = np.array([top_left, top_right, bottom_right, bottom_left], dtype='float32') 
-  side = max([  distance_between(bottom_right, top_right), 
+  src = np.array([top_left, top_right, bottom_right, bottom_left], dtype='float32')
+  side = max([  distance_between(bottom_right, top_right),
             distance_between(top_left, bottom_left),
-            distance_between(bottom_right, bottom_left),   
+            distance_between(bottom_right, bottom_left),
             distance_between(top_left, top_right) ])
   dst = np.array([[0, 0], [side - 1, 0], [side - 1, side - 1], [0, side - 1]], dtype='float32')
   m = cv2.getPerspectiveTransform(src, dst)
@@ -93,7 +93,7 @@ def getnumber(img):
   loaded_model_pred = loaded_model.predict(reshaped , verbose = 0)[0]
   return np.argmax(loaded_model_pred)+1
 
-def do_everything(imgpath):
+def Solve_Sudoku(imgpath):
     img=cv2.imread(imgpath)
     preprocessed_img = preprocess(img,skip_dilate=True)
     finalimg = findsudoku(preprocessed_img)
