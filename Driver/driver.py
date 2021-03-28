@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import operator
 
 def preprocess(img,skip_dilate=False):
-    proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
+  proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
   proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)
   proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
   proc = cv2.bitwise_not(proc, proc)
@@ -87,18 +87,18 @@ def makesudoku(finalgrid):
     return sudoku
 
 def getnumber(img):
-  plt.imshow(img)
+  # plt.imshow(img)
   resize = cv2.resize(img.copy(),(28,28))
   reshaped = resize.reshape(1,28,28,1)
+  loaded_model = load_model('Driver/test_model')
   loaded_model_pred = loaded_model.predict(reshaped , verbose = 0)[0]
-  return np.argmax(loaded_model_pred)+1
+  return int(np.argmax(loaded_model_pred)+1)
 
 def Solve_Sudoku(imgpath):
     img=cv2.imread(imgpath)
     preprocessed_img = preprocess(img,skip_dilate=True)
     finalimg = findsudoku(preprocessed_img)
 
-    loaded_model = load_model('./test_model')
     finalgrid = makefinalgrid(finalimg)
     sudoku = makesudoku(finalgrid)
     return sudoku
