@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.views.generic import TemplateView, FormView
 # from services import api
 # from django.core.files.storage import FileSystemStorage
-# import os
+import os
 # import numpy as np
 # from PIL import ImageFile, Image
 # ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -16,20 +16,26 @@ from django.views.generic import TemplateView, FormView
 
 def main_page(request):
 
-    # base_repo=os.path.join('static','repo')
-    #
-    # if request.method=='POST':
-    #     img=request.FILES['img']
-    #     fs = FileSystemStorage()
-    #     file = fs.save(os.path.join(base_repo,img.name), img)
-    #     img_name=img.name
-    #     img_path=os.path.join(base_repo,img_name)
-    #     img=Image.open(img_path)
-    #     img=img.resize((224,224))
-    #     img=np.array(img)
-    #     # print(img.shape)
-    #     caption=api.predict_caption(img)
-    #     return render(request,'main/prediction.html',{'caption':caption,'file_name':os.path.join('repo',img_name)})
+    base_repo=os.path.join('static','repo')
+
+    if request.method=='POST':
+        # img=request.FILES['img']
+        # fs = FileSystemStorage()
+        # file = fs.save(os.path.join(base_repo,img.name), img)
+        # img_name=img.name
+        # img_path=os.path.join(base_repo,img_name)
+        # img=Image.open(img_path)
+        # img=img.resize((224,224))
+        # img=np.array(img)
+        # print(img.shape)
+        mat=[]
+        for i in range(0,9):
+            l=[]
+            for j in range(0, 9):
+                l.append(j)
+            mat.append(l)
+
+        return render(request,'main/prediction.html',{'results':mat})
     #
     # # On getting Get Request delete all saved images!!!
     # fs = FileSystemStorage()
