@@ -85,12 +85,6 @@ def makesudoku(finalgrid):
         else:
           sudoku[i][j]=0
     return sudoku
-imgpath='/content/sudoku.jpg'
-img=cv2.imread(imgpath)
-preprocessed_img = preprocess(img,skip_dilate=True)
-finalimg = findsudoku(preprocessed_img)
-
-loaded_model = load_model('./test_model')
 
 def getnumber(img):
   plt.imshow(img)
@@ -99,6 +93,12 @@ def getnumber(img):
   loaded_model_pred = loaded_model.predict(reshaped , verbose = 0)[0]
   return np.argmax(loaded_model_pred)+1
 
-finalgrid = makefinalgrid(finalimg)
-sudoku = makesudoku(finalgrid)
+def do_everything(imgpath):
+    img=cv2.imread(imgpath)
+    preprocessed_img = preprocess(img,skip_dilate=True)
+    finalimg = findsudoku(preprocessed_img)
 
+    loaded_model = load_model('./test_model')
+    finalgrid = makefinalgrid(finalimg)
+    sudoku = makesudoku(finalgrid)
+    return sudoku
