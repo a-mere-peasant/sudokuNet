@@ -72,9 +72,7 @@ def makefinalgrid(grid):
             cv2.imwrite(str("BoardCells/cell" + str(i) + str(j) + ".jpg"), finalgrid[i][j])
     for i in range(9):
       for j in range(9):
-        finalgrid[i][j]=finalgrid[i][j][6:28,5:25]
         finalgrid[i][j]=cv2.resize(finalgrid[i][j],(28,28))
-        ret,finalgrid[i][j] = cv2.threshold(finalgrid[i][j],127,255,cv2.THRESH_BINARY)
     return finalgrid
 
 def makesudoku(finalgrid):
