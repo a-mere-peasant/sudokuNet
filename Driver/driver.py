@@ -6,13 +6,13 @@ import operator
 
 def preprocess(img,skip_dilate=False):
     proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
-  proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)  
-  proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-  proc = cv2.bitwise_not(proc, proc)
-  if skip_dilate==False:
-      kernel = np.array([[0., 1., 0.], [1., 1., 1.], [0., 1., 0.]],np.uint8)
-      proc = cv2.dilate(proc, kernel)
-  return proc
+    proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)  
+    proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    proc = cv2.bitwise_not(proc, proc)
+    if skip_dilate==False:
+        kernel = np.array([[0., 1., 0.], [1., 1., 1.], [0., 1., 0.]],np.uint8)
+        proc = cv2.dilate(proc, kernel)
+    return proc
 
 def distance_between(p1, p2):
     a = p2[0] - p1[0]
