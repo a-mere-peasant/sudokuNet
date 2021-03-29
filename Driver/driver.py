@@ -20,7 +20,8 @@ def distance_between(p1, p2):
     return np.sqrt((a ** 2) + (b ** 2))
 
 def findsudoku(img):
-  contours, _ = cv2.findContours(img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+  newimg = preprocess(img.copy(),skip_dilate=True)
+  contours, _ = cv2.findContours(newimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   contours = sorted(contours, key=cv2.contourArea, reverse=True)
   #showcontours = cv2.drawContours(img, [contours[0]], 0, (0,128,0), 3)
   polygon = contours[0]
@@ -56,7 +57,7 @@ def makefinalgrid(grid):
 
     finalgrid = []
     for i in range(0, len(tempgrid) - 8, 9):
-        finalgrid.append(tempgrid[i:i + 9])# Converting all the cell images to np.array
+        finalgrid.append(tempgrid[i:i + 9])
     for i in range(9):
         for j in range(9):
           finalgrid[i][j] = np.array(finalgrid[i][j])
@@ -71,16 +72,14 @@ def makefinalgrid(grid):
             cv2.imwrite(str("BoardCells/cell" + str(i) + str(j) + ".jpg"), finalgrid[i][j])
     for i in range(9):
       for j in range(9):
-        finalgrid[i][j]=finalgrid[i][j][6:28,5:25]
         finalgrid[i][j]=cv2.resize(finalgrid[i][j],(28,28))
-        ret,finalgrid[i][j] = cv2.threshold(finalgrid[i][j],127,255,cv2.THRESH_BINARY)
     return finalgrid
 
 def makesudoku(finalgrid):
     sudoku = np.zeros([9,9])
     for i in range(9):
       for j in range(9):
-        if(finalgrid[i][j].sum()>20000):
+        if(finalgrid[i][j].sum()>37500):
           sudoku[i][j]=getnumber((finalgrid[i][j]))
         else:
           sudoku[i][j]=0
@@ -92,13 +91,52 @@ def getnumber(img):
   reshaped = resize.reshape(1,28,28,1)
   loaded_model_pred = loaded_model.predict(reshaped , verbose = 0)[0]
   return np.argmax(loaded_model_pred)+1
+def isvalid(sudoku,i,j,po):
+  for jj in range(9):
+    if sudoku[i][jj]==po:
+      return False
+  for ii in range(9):
+    if sudoku[ii][j]==po:
+      return False
+  smi = (i//3)*3
+  smj = (j//3)*3
+  #print(smi,smj)
+  for x in range(3):
+    for y in range(3):
+      if (sudoku[smi+x][smj+y]==po):
+        return False
+  return True
+    
+sodfinal = []
+
+def solvesudoku(sudoku,i,j):
+  if (i==9):
+    sodfinal = sudoku
+    return
+
+  if j==8:
+    ni=i+1
+    nj=0
+  else:
+    ni=i
+    nj=j+1
+  
+  if (sudoku[i][j]!=0):
+    solvesudoku(sudoku,ni,nj)
+  else:
+    for po in range(10):
+      if (isvalid(sudoku,i,j,po)==True):
+        sudoku[i][j]=po
+        solvesudoku(sudoku,ni,nj)
+      sudoku[i][j]=0
 
 def Solve_Sudoku(imgpath):
     img=cv2.imread(imgpath)
-    preprocessed_img = preprocess(img,skip_dilate=True)
-    finalimg = findsudoku(preprocessed_img)
-
+    finalimg = findsudoku(img)
+    finalimg = cv2.cvtColor(finalimg, cv2.COLOR_BGR2GRAY)
+    finalimg = cv2.bitwise_not(cv2.adaptiveThreshold(finalimg, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 101, 1)) 
     loaded_model = load_model('./test_model')
     finalgrid = makefinalgrid(finalimg)
     sudoku = makesudoku(finalgrid)
-    return sudoku
+    solvesudoku(sudoku)
+    print(sodfinal)
