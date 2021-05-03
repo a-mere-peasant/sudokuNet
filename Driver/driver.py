@@ -6,7 +6,7 @@ import operator
 
 def preprocess(img,skip_dilate=False):
     proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
-    proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)  
+    proc = cv2.cvtColor(img.copy(),cv2.COLOR_BGR2GRAY)
     proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     proc = cv2.bitwise_not(proc, proc)
     if skip_dilate==False:
@@ -86,11 +86,13 @@ def makesudoku(finalgrid):
     return sudoku
 
 def getnumber(img):
-  plt.imshow(img)
+  # plt.imshow(img)
   resize = cv2.resize(img.copy(),(28,28))
   reshaped = resize.reshape(1,28,28,1)
+  loaded_model = load_model('Driver/test_model')
   loaded_model_pred = loaded_model.predict(reshaped , verbose = 0)[0]
   return np.argmax(loaded_model_pred)+1
+
 def isvalid(sudoku,i,j,po):
   for jj in range(9):
     if sudoku[i][jj]==po:
@@ -106,7 +108,7 @@ def isvalid(sudoku,i,j,po):
       if (sudoku[smi+x][smj+y]==po):
         return False
   return True
-    
+
 sodfinal = []
 
 def solvesudoku(sudoku,i,j):
@@ -120,7 +122,7 @@ def solvesudoku(sudoku,i,j):
   else:
     ni=i
     nj=j+1
-  
+
   if (sudoku[i][j]!=0):
     solvesudoku(sudoku,ni,nj)
   else:
@@ -134,9 +136,10 @@ def Solve_Sudoku(imgpath):
     img=cv2.imread(imgpath)
     finalimg = findsudoku(img)
     finalimg = cv2.cvtColor(finalimg, cv2.COLOR_BGR2GRAY)
-    finalimg = cv2.bitwise_not(cv2.adaptiveThreshold(finalimg, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 101, 1)) 
-    loaded_model = load_model('./test_model')
+    finalimg = cv2.bitwise_not(cv2.adaptiveThreshold(finalimg, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 101, 1))
     finalgrid = makefinalgrid(finalimg)
     sudoku = makesudoku(finalgrid)
-    solvesudoku(sudoku)
-    print(sodfinal)
+    
+    solvesudoku(sudoku,0,0)
+    return sodfinal
+    # print(sodfinal)
